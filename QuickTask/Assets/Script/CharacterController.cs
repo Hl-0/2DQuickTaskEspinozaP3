@@ -1,11 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
+
 
 public class CharacterController : MonoBehaviour
 {
-    
+    public float speed = 20.0f;
+    public float horizontalInput;
+    public float forwardInput;
+    public float verticalInput;
+    public bool gameOver = false;
+    private Rigidbody playerRb;
+    public bool isOnGround = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,18 +21,31 @@ public class CharacterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float horizontal = 0.0f;
-        if(Keyboard.current.leftArrowKey.isPressed)
+        horizontalInput = Input.GetAxis("Horizontal");
+        forwardInput = Input.GetAxis("Vertical");
+
+        transform.Translate(Vector3.forward * Time.deltaTime * 10);
+
+
+        if (Input.GetKey(KeyCode.Space))
         {
-            horizontal = -1.0f;
+            transform.Translate(Vector3.up * Time.deltaTime * 10);
         }
-        else if(Keyboard.current.rightArrowKey.isPressed)
+        if (Input.GetKey(KeyCode.LeftArrow))
         {
-            horizontal= 1.0f;
+            transform.Translate(Vector3.left * Time.deltaTime * 5);
         }
-        Debug.Log(horizontal);
-        Vector2 position = transform.position;
-        position.x = position.x + 0.1f * horizontal;
-        transform.position = position;
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            transform.Translate(Vector3.right * Time.deltaTime * 5);
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    { 
+        if (collision.gameObject.CompareTag("Spike"))
+        {
+            gameOver = true;
+            Debug.Log("GAME OVER!");
+        }
     }
 }
